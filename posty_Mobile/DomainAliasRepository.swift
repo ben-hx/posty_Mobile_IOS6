@@ -1,5 +1,5 @@
 //
-//  ErrorResponse.swift
+//  DomainAliasRepository.swift
 //  posty_Mobile
 //
 //  Created by admin on 22.06.15.
