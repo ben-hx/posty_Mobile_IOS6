@@ -6,19 +6,11 @@
 //  Copyright (c) 2015 ben-hx. All rights reserved.
 //
 
-import UIKit
-
-class ViewConsts: UITableViewCell {
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+struct ViewConsts
+{
+    struct ReuseIdentifier {
+        static let TableCellLabelTextfield = "TableCellLabelTextfieldID"
+        static let TableCellTextFieldAddButton = "TableCellTextFieldAddButtonID"
+        static let TableCellSearchHeader = "TableCellSearchHeaderID"
     }
-
-    override func setSelected(selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
 }

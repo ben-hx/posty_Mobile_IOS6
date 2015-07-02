@@ -6,4 +6,17 @@
 //  Copyright (c) 2015 ben-hx. All rights reserved.
 //
 
-import Foundation
+class API
+{
+    var caption = ""
+    var url = ""
+    var authKey = ""
+    
+    init(caption: String, url: String, authKey: String)
+    {
+        self.caption = caption
+        self.url = url
+        self.authKey = authKey
+    }
+    
+}

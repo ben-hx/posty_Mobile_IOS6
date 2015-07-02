@@ -6,4 +6,21 @@
 //  Copyright (c) 2015 ben-hx. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+extension UIViewController {
+
+    func presentAlert(title: String, message: String, completion: (() -> Void)? = nil) -> Void {
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: UIAlertControllerStyle.Alert
+        )
+        var action = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (_) -> Void in
+            completion?()
+        })
+        alertController.addAction(action)
+        self.presentViewController(alertController, animated: true, completion: nil)
+    }
+
+}

@@ -8,17 +8,26 @@
 
 import UIKit
 
-class TableCellTextFieldButton: UITableViewCell {
+protocol TableCellTextFieldAddButtonDelegate {
+    func tableCellTextFieldAddButtonDidClickButton(cell: TableCellTextFieldAddButton, sender: UIButton, textField: UITextField)
+}
+
+class TableCellTextFieldAddButton: UITableViewCell {
+    var delegate: TableCellTextFieldAddButtonDelegate?
+    
+    @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var textField: UITextField!
+    
+    @IBAction func buttonClick(sender: UIButton) {
+        delegate?.tableCellTextFieldAddButtonDidClickButton(self, sender: sender, textField: textField)
+    }
 
     override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+        textField?.addTarget(self, action: "textFieldDidChange:", forControlEvents: UIControlEvents.EditingChanged)
+        textFieldDidChange(textField)
     }
-
-    override func setSelected(selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    func textFieldDidChange(textField: UITextField) {
+        button.enabled = textField.text != ""
     }
-
 }
