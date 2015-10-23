@@ -13,7 +13,7 @@
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="GD4-t3-IYt" id="MMo-LU-yCz">
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dt6-25-WRf">
+                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dt6-25-WRf">
                         <rect key="frame" x="282" y="7" width="30" height="30"/>
                         <state key="normal" title="Add">
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -22,18 +22,18 @@
                             <action selector="buttonClick:" destination="GD4-t3-IYt" eventType="touchUpInside" id="TJ0-jW-9o9"/>
                         </connections>
                     </button>
-                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qFq-dQ-tpw">
-                        <rect key="frame" x="8" y="12" width="266" height="21"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qFq-dQ-tpw">
+                        <rect key="frame" x="8" y="11" width="266" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <textInputTraits key="textInputTraits"/>
                     </textField>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="qFq-dQ-tpw" firstAttribute="leading" secondItem="MMo-LU-yCz" secondAttribute="leadingMargin" id="7v8-v3-Pzq"/>
-                    <constraint firstItem="Dt6-25-WRf" firstAttribute="leading" secondItem="qFq-dQ-tpw" secondAttribute="trailing" constant="8" symbolic="YES" id="Fcl-bi-OjV"/>
-                    <constraint firstItem="Dt6-25-WRf" firstAttribute="trailing" secondItem="MMo-LU-yCz" secondAttribute="trailingMargin" id="NLV-XN-Tcy"/>
-                    <constraint firstAttribute="centerY" secondItem="Dt6-25-WRf" secondAttribute="centerY" constant="-0.5" id="WeP-UL-S9U"/>
-                    <constraint firstAttribute="centerY" secondItem="qFq-dQ-tpw" secondAttribute="centerY" constant="-0.5" id="w2e-sk-PG1"/>
+                    <constraint firstItem="Dt6-25-WRf" firstAttribute="trailing" secondItem="MMo-LU-yCz" secondAttribute="trailingMargin" id="QP6-0x-f2J"/>
+                    <constraint firstItem="qFq-dQ-tpw" firstAttribute="leading" secondItem="MMo-LU-yCz" secondAttribute="leadingMargin" id="RFl-r5-OtU"/>
+                    <constraint firstItem="Dt6-25-WRf" firstAttribute="leading" secondItem="qFq-dQ-tpw" secondAttribute="trailing" constant="8" id="VBT-M4-KWT"/>
+                    <constraint firstItem="Dt6-25-WRf" firstAttribute="top" secondItem="MMo-LU-yCz" secondAttribute="topMargin" constant="-1" id="rW5-cV-9dF"/>
+                    <constraint firstItem="qFq-dQ-tpw" firstAttribute="bottom" secondItem="Dt6-25-WRf" secondAttribute="bottom" constant="-5" id="tIf-ZO-wii"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

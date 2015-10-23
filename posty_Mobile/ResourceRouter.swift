@@ -37,7 +37,7 @@ enum ResourceRouter: URLRequestConvertible {
         let URL = NSURL(string: ResourceRouter.baseURLString)!
         let mutableURLRequest = NSMutableURLRequest()
         mutableURLRequest.HTTPMethod = method.rawValue
-        mutableURLRequest.addValue(APIRepository.sharedInstance.currentAPI.authKey, forHTTPHeaderField: "auth_token")
+        mutableURLRequest.addValue(ModelFactory.sharedAPIRepositoryInstance.currentAPI.authKey, forHTTPHeaderField: "auth_token")
         
         switch self {
         case .Create(let resource, let parameters):

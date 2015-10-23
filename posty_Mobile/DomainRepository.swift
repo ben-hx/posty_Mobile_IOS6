@@ -1,5 +1,5 @@
 //
-//  TestAPI.swift
+//  DomainRepository.swift
 //  posty_Mobile
 //
 //  Created by admin on 01.06.15.
@@ -10,15 +10,8 @@ import Alamofire
 import SwiftyJSON
 import BrightFutures
 
-public class DomainRepository
+public class DomainRepository: ApiRepositoryBase
 {
-    let util: ApiManagerUtil
-    
-    init(manager: Manager)
-    {
-        self.util = ApiManagerUtil(manager: manager)
-    }
-    
     func getByName(name: String) -> Future<Domain> {
         return util.objectRequest(ResourceRouter.GetSingle(resource: "/domains/\(name)"))
     }

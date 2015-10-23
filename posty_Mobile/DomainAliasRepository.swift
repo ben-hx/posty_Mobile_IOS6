@@ -10,9 +10,8 @@ import Alamofire
 import SwiftyJSON
 import BrightFutures
 
-public class DomainAliasRepository
+public class DomainAliasRepository: ApiRepositoryBase
 {
-    let util: ApiManagerUtil
     let domain: Domain
     var baseUrl: String {
         get {
@@ -22,8 +21,8 @@ public class DomainAliasRepository
     
     init(manager: Manager, domain: Domain)
     {
-        self.util = ApiManagerUtil(manager: manager)
         self.domain = domain
+        super.init(manager: manager)
     }
     
     func getByName(name: String) -> Future<DomainAlias> {

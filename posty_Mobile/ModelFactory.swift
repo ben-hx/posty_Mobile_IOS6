@@ -14,12 +14,11 @@ class ModelFactory {
     {
         struct Singleton
         {
-            static let instance = APIRepository()
+            static let instance = APIRepository(manager: Alamofire.Manager.sharedInstance)
         }
         
         return Singleton.instance
     }
-    
     
     static func getDomainRepository() -> DomainRepository {
         return DomainRepository(manager: Alamofire.Manager.sharedInstance)
@@ -33,4 +32,15 @@ class ModelFactory {
         return DomainUserRepository(manager: Alamofire.Manager.sharedInstance, domain: domain)
     }
 
+    static func getTransportRepository() -> TransportRepository {
+        return TransportRepository(manager: Alamofire.Manager.sharedInstance)
+    }
+    
+    static func getAPIKeyRepository() -> APIKeyRepository {
+        return APIKeyRepository(manager: Alamofire.Manager.sharedInstance)
+    }
+    
+    static func getAPIRepository() -> APIRepository {
+        return sharedAPIRepositoryInstance
+    }
 }

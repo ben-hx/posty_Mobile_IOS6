@@ -18,6 +18,7 @@ class TableCellSearchHeader: UITableViewHeaderFooterView, UISearchBarDelegate {
     }
     
     var delegate: TableCellSearchHeaderDelegate?
+    var enabled = true
     
     @IBOutlet weak var searchBar: UISearchBar! {
         didSet {
@@ -38,5 +39,8 @@ class TableCellSearchHeader: UITableViewHeaderFooterView, UISearchBarDelegate {
         }
     }
     
+    func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
+        return enabled
+    }
 
 }

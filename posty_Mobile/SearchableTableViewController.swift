@@ -14,18 +14,19 @@ protocol SearchableTableViewControllerDataSource {
     func numberOfRows() -> Int
     func cellForRowAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) -> UITableViewCell
     func deleteAtIndexPath(tableView: UITableView, indexPath: NSIndexPath)
+    func addClicked(sender: UIButton)
 }
 
-class SearchableTableViewController: UITableViewController, UIScrollViewDelegate, TableCellSearchHeaderDelegate {
+class SearchableTableViewController: UITableViewController, UIScrollViewDelegate, TableCellSearchHeaderDelegate, ActivityIndicatorViewWithEventsDelegate, Processable {
     
     private var searchHeader: TableCellSearchHeader?
     var listDataSource: SearchableTableViewControllerDataSource?
-    
+    var loadingIndicator:  ActivityIndicatorViewWithEvents?
+    var searchBarButtonItem: UIBarButtonItem?
+    var addBarButtonItem: UIBarButtonItem?
     var showSearchHeader = false {
         didSet {
-            if (!oldValue) {
-                self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.Top)
-            }
+            self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.Top)
         }
     }
     
@@ -33,6 +34,14 @@ class SearchableTableViewController: UITableViewController, UIScrollViewDelegate
         listDataSource?.searchForText(searchText)
         self.tableView.reloadData()
         searchHeader.searchBar.becomeFirstResponder()
+    }
+    
+    func searchClicked(sender: UIButton) {
+        showSearchHeader = !showSearchHeader
+    }
+    
+    func addClicked(sender: UIButton) {
+        listDataSource?.addClicked(sender)
     }
     
     override func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
@@ -47,18 +56,36 @@ class SearchableTableViewController: UITableViewController, UIScrollViewDelegate
         tableView.registerNib(nib, forHeaderFooterViewReuseIdentifier: ViewConsts.ReuseIdentifier.TableCellSearchHeader)
         searchHeader = tableView.dequeueReusableHeaderFooterViewWithIdentifier(ViewConsts.ReuseIdentifier.TableCellSearchHeader) as? TableCellSearchHeader
         searchHeader!.delegate = self
+        self.searchBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: "addClicked:")
+        self.addBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Search, target: self, action: "searchClicked:")
+        self.navigationItem.setRightBarButtonItems([searchBarButtonItem!,addBarButtonItem!], animated: true)
+        self.loadingIndicator = getActivityIndicatorView()
+        self.loadingIndicator?.delegate = self
+    }
+    
+    func didStartAnimating() {
+        searchHeader?.enabled = false
+        searchBarButtonItem?.enabled = false
+        addBarButtonItem?.enabled = false
+    }
+    
+    func didStopAnimating() {
+        searchHeader?.enabled = true
+        searchBarButtonItem?.enabled = true
+        addBarButtonItem?.enabled = true
+    }
+    
+    func beginProcess() {
+        self.loadingIndicator?.startAnimating()
+    }
+    
+    func endProcess() {
+        self.loadingIndicator?.stopAnimating()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         listDataSource?.updateDataSource(self.tableView)
-        if let frame = navigationController?.navigationBar.frame {
-            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 70, height: frame.height))
-            imageView.contentMode = .ScaleAspectFit
-            let image = UIImage(named: "postyMobileLogo.png")
-            imageView.image = image
-            navigationItem.leftBarButtonItem?.customView = imageView
-        }
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

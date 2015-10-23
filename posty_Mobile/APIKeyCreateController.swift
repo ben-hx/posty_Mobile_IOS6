@@ -1,5 +1,5 @@
 //
-//  DomainCreateEditViewController.swift
+//  APIKeyCreateController.swift
 //  posty_Mobile
 //
 //  Created by admin on 08.06.15.
@@ -8,17 +8,17 @@
 
 import UIKit
 
-class DomainCreateController: SaveableViewController {
+class APIKeyCreateController: SaveableViewController {
     
-    var domain: Domain? {
+    var apiKey: APIKey? {
         didSet {
             updateUI()
         }
     }
     
-    let repo = ModelFactory.getDomainRepository()
+    let repo = ModelFactory.getAPIKeyRepository()
     
-    @IBOutlet weak var tfName: UITextField!
+    @IBOutlet weak var tfToken: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,14 +27,14 @@ class DomainCreateController: SaveableViewController {
     }
     
     private func updateUI() {
-        tfName?.text = domain?.name
+        tfToken?.text = apiKey?.token
     }
     
     override func saveClicked(sender: UIBarButtonItem) {
-        repo.create(Domain(name: tfName.text)!).onSuccess{ result in
+        repo.create(APIKey(token: tfToken.text)!).onSuccess{ result in
             navigationController?.popViewControllerAnimated(true)
-        }.onFailure() { error in
-           self.presentAlert("Error while creating the Domain", message: error.localizedDescription)
+            }.onFailure() { error in
+                self.presentAlert("Error while creating the API-Key", message: error.localizedDescription)
         }
     }
     

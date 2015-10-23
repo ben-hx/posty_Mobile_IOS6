@@ -1,5 +1,5 @@
 //
-//  DomainListController.swift
+//  DomainUserListController.swift
 //  posty_Mobile
 //
 //  Created by admin on 29.06.15.
@@ -8,27 +8,29 @@
 
 import UIKit
 
-class DomainListController: SearchableTableViewController, SearchableTableViewControllerDataSource {
+class DomainUserListController: SearchableTableViewController, SearchableTableViewControllerDataSource {
     
     private struct Consts
     {
         static let CellReuseID = "CellReuseID"
         struct Sagues {
-            static let Edit = "EditDomain"
-            static let Create = "CreateDomain"
+            static let Edit = "EditUser"
+            static let Create = "CreateUser"
         }
     }
     
-    let repo = ModelFactory.getDomainRepository()
-    var data = FilterableList<Domain>()
+    var repo: DomainUserRepository?
+    var data = FilterableList<DomainUser>()
+    var domain: Domain? {
+        didSet {
+            self.repo = ModelFactory.getDomainUserRepository(domain!)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         listDataSource = self
-        if let navBar = navigationController?.navigationBar {
-            self.navigationItem.setLeftBarButtonItem(getPostyBarButtonItem(navBar), animated: true)
-        }
-        repo.processDelegate = self
+        repo?.processDelegate = self
     }
     
     func searchForText(searchText: String) {
@@ -36,11 +38,9 @@ class DomainListController: SearchableTableViewController, SearchableTableViewCo
     }
     
     func updateDataSource(tableView: UITableView) {
-        loadingIndicator?.startAnimating()
-        repo.getAll().onSuccess{ domainList in
-            self.data.reload(domainList)
+        repo!.getAll().onSuccess{ userList in
+            self.data.reload(userList)
             self.tableView?.reloadData()
-            self.loadingIndicator?.stopAnimating()
         }
     }
     
@@ -50,14 +50,14 @@ class DomainListController: SearchableTableViewController, SearchableTableViewCo
     
     func cellForRowAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) -> UITableViewCell {
         var cell = tableView.dequeueReusableCellWithIdentifier(Consts.CellReuseID) as! UITableViewCell
-        cell.textLabel?.text = self.data.getAtIndex(indexPath.row)!.name
+        cell.textLabel?.text = self.data.getAtIndex(indexPath.row)!.name+"@"+domain!.name
         return cell
     }
     
     func deleteAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) {
-        let domain = self.data.getAtIndex(indexPath.row)
-        self.repo.delete(domain!.name).onSuccess{ result in
-            self.data.remove(domain!)
+        let user = self.data.getAtIndex(indexPath.row)
+        self.repo!.delete(user!.name).onSuccess{ result in
+            self.data.remove(user!)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
         }
     }
@@ -65,26 +65,27 @@ class DomainListController: SearchableTableViewController, SearchableTableViewCo
     override func addClicked(sender: UIButton) {
         performSegueWithIdentifier(Consts.Sagues.Create, sender: sender)
     }
-
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let identifier = segue.identifier {
             switch identifier {
             case Consts.Sagues.Create:
-                if let destination = segue.destinationViewController as? DomainCreateController {
+                if let destination = segue.destinationViewController as? DomainUserCreateController {
+                    destination.domain = self.domain
                 }
             case Consts.Sagues.Edit:
                 if let destination = segue.destinationViewController as? DomainEditController {
                     let indexPath = tableView.indexPathForSelectedRow()!
-                    destination.domain = self.data.getAtIndex(indexPath.row)
+                    //destination.domain = self.data.getAtIndex(indexPath.row)
                 }
             default: break
             }
         }
     }
-
+    
 }
 
-extension Domain: SearchtextFiltable {
+extension DomainUser: SearchtextFiltable {
     func filter(searchText: String) -> Bool {
         let tmp: NSString = self.name
         let range = tmp.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch)

@@ -1,5 +1,5 @@
 //
-//  DomainListController.swift
+//  TransportListController.swift
 //  posty_Mobile
 //
 //  Created by admin on 29.06.15.
@@ -8,19 +8,19 @@
 
 import UIKit
 
-class DomainListController: SearchableTableViewController, SearchableTableViewControllerDataSource {
+class TransportListController: SearchableTableViewController, SearchableTableViewControllerDataSource {
     
     private struct Consts
     {
         static let CellReuseID = "CellReuseID"
         struct Sagues {
-            static let Edit = "EditDomain"
-            static let Create = "CreateDomain"
+            static let Edit = "EditTransport"
+            static let Create = "CreateTransport"
         }
     }
     
-    let repo = ModelFactory.getDomainRepository()
-    var data = FilterableList<Domain>()
+    let repo = ModelFactory.getTransportRepository()
+    var data = FilterableList<Transport>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,8 +37,8 @@ class DomainListController: SearchableTableViewController, SearchableTableViewCo
     
     func updateDataSource(tableView: UITableView) {
         loadingIndicator?.startAnimating()
-        repo.getAll().onSuccess{ domainList in
-            self.data.reload(domainList)
+        repo.getAll().onSuccess{ transportList in
+            self.data.reload(transportList)
             self.tableView?.reloadData()
             self.loadingIndicator?.stopAnimating()
         }
@@ -55,9 +55,9 @@ class DomainListController: SearchableTableViewController, SearchableTableViewCo
     }
     
     func deleteAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) {
-        let domain = self.data.getAtIndex(indexPath.row)
-        self.repo.delete(domain!.name).onSuccess{ result in
-            self.data.remove(domain!)
+        let transport = self.data.getAtIndex(indexPath.row)
+        self.repo.delete(transport!.name).onSuccess{ result in
+            self.data.remove(transport!)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
         }
     }
@@ -65,26 +65,26 @@ class DomainListController: SearchableTableViewController, SearchableTableViewCo
     override func addClicked(sender: UIButton) {
         performSegueWithIdentifier(Consts.Sagues.Create, sender: sender)
     }
-
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let identifier = segue.identifier {
             switch identifier {
             case Consts.Sagues.Create:
-                if let destination = segue.destinationViewController as? DomainCreateController {
+                if let destination = segue.destinationViewController as? TransportCreateController {
                 }
             case Consts.Sagues.Edit:
-                if let destination = segue.destinationViewController as? DomainEditController {
+                if let destination = segue.destinationViewController as? TransportEditController {
                     let indexPath = tableView.indexPathForSelectedRow()!
-                    destination.domain = self.data.getAtIndex(indexPath.row)
+                    destination.transport = self.data.getAtIndex(indexPath.row)
                 }
             default: break
             }
         }
     }
-
+    
 }
 
-extension Domain: SearchtextFiltable {
+extension Transport: SearchtextFiltable {
     func filter(searchText: String) -> Bool {
         let tmp: NSString = self.name
         let range = tmp.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch)

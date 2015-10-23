@@ -8,11 +8,11 @@
 
 import SwiftyJSON
 
-final class DomainUser: ResponseObjectSerializable, ResponseCollectionSerializable {
+final class DomainUser: ResponseObjectSerializable, ResponseCollectionSerializable, Equatable {
     var id: Int
     var name: String
     var password: String
-    var quota: Int
+    var quota: Double
     
     @objc static func collection(representation: AnyObject) -> [DomainUser] {
         var result = [DomainUser]()
@@ -23,7 +23,7 @@ final class DomainUser: ResponseObjectSerializable, ResponseCollectionSerializab
         return result
     }
     
-    @objc required init?(name: String, password: String, quota: Int) {
+    @objc required init?(name: String, password: String, quota: Double) {
         self.id = 0
         self.name = name
         self.password = password
@@ -31,11 +31,11 @@ final class DomainUser: ResponseObjectSerializable, ResponseCollectionSerializab
     }
     
     @objc required init?(representation: AnyObject) {
-        let json = JSON(representation)["virtual_domain_user"]
+        let json = JSON(representation)["virtual_user"]
         self.id = json["id"].int!
         self.name = json["name"].stringValue
         self.password = json["password"].stringValue
-        self.quota = json["quota"].int!
+        self.quota = json["quota"].doubleValue
     }
     
     func toDictionary() -> [String: AnyObject] {
@@ -46,4 +46,8 @@ final class DomainUser: ResponseObjectSerializable, ResponseCollectionSerializab
         result["quota"] = self.quota
         return result
     }
+}
+
+func ==(lhs: DomainUser, rhs: DomainUser) -> Bool {
+    return lhs.name == rhs.name
 }

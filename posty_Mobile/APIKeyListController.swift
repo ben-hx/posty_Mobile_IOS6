@@ -1,5 +1,5 @@
 //
-//  DomainListController.swift
+//  APIKeyListController.swift
 //  posty_Mobile
 //
 //  Created by admin on 29.06.15.
@@ -8,19 +8,19 @@
 
 import UIKit
 
-class DomainListController: SearchableTableViewController, SearchableTableViewControllerDataSource {
+class APIKeyListController: SearchableTableViewController, SearchableTableViewControllerDataSource {
     
     private struct Consts
     {
         static let CellReuseID = "CellReuseID"
         struct Sagues {
-            static let Edit = "EditDomain"
-            static let Create = "CreateDomain"
+            static let Edit = "EditAPIKey"
+            static let Create = "CreateAPIKey"
         }
     }
     
-    let repo = ModelFactory.getDomainRepository()
-    var data = FilterableList<Domain>()
+    let repo = ModelFactory.getAPIKeyRepository()
+    var data = FilterableList<APIKey>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,8 +37,8 @@ class DomainListController: SearchableTableViewController, SearchableTableViewCo
     
     func updateDataSource(tableView: UITableView) {
         loadingIndicator?.startAnimating()
-        repo.getAll().onSuccess{ domainList in
-            self.data.reload(domainList)
+        repo.getAll().onSuccess{ apiKeyList in
+            self.data.reload(apiKeyList)
             self.tableView?.reloadData()
             self.loadingIndicator?.stopAnimating()
         }
@@ -50,14 +50,14 @@ class DomainListController: SearchableTableViewController, SearchableTableViewCo
     
     func cellForRowAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) -> UITableViewCell {
         var cell = tableView.dequeueReusableCellWithIdentifier(Consts.CellReuseID) as! UITableViewCell
-        cell.textLabel?.text = self.data.getAtIndex(indexPath.row)!.name
+        cell.textLabel?.text = self.data.getAtIndex(indexPath.row)!.token
         return cell
     }
     
     func deleteAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) {
-        let domain = self.data.getAtIndex(indexPath.row)
-        self.repo.delete(domain!.name).onSuccess{ result in
-            self.data.remove(domain!)
+        let apiKey = self.data.getAtIndex(indexPath.row)
+        self.repo.delete(apiKey!.token).onSuccess{ result in
+            self.data.remove(apiKey!)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
         }
     }
@@ -65,28 +65,28 @@ class DomainListController: SearchableTableViewController, SearchableTableViewCo
     override func addClicked(sender: UIButton) {
         performSegueWithIdentifier(Consts.Sagues.Create, sender: sender)
     }
-
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let identifier = segue.identifier {
             switch identifier {
             case Consts.Sagues.Create:
-                if let destination = segue.destinationViewController as? DomainCreateController {
+                if let destination = segue.destinationViewController as? APIKeyCreateController {
                 }
             case Consts.Sagues.Edit:
-                if let destination = segue.destinationViewController as? DomainEditController {
+                if let destination = segue.destinationViewController as? APIKeyEditController {
                     let indexPath = tableView.indexPathForSelectedRow()!
-                    destination.domain = self.data.getAtIndex(indexPath.row)
+                    destination.apiKey = self.data.getAtIndex(indexPath.row)
                 }
             default: break
             }
         }
     }
-
+    
 }
 
-extension Domain: SearchtextFiltable {
+extension APIKey: SearchtextFiltable {
     func filter(searchText: String) -> Bool {
-        let tmp: NSString = self.name
+        let tmp: NSString = self.token
         let range = tmp.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch)
         return range.location != NSNotFound
     }

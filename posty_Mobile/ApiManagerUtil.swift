@@ -10,6 +10,11 @@ import Alamofire
 import SwiftyJSON
 import BrightFutures
 
+protocol Processable {
+    func beginProcess()
+    func endProcess()
+}
+
 public class ApiManagerUtil {
     
     private struct Consts
@@ -20,10 +25,19 @@ public class ApiManagerUtil {
     }
     
     let manager: Manager
+    var processableDelegate: Processable?
     
     public init(manager: Manager)
     {
         self.manager = manager
+    }
+    
+    public func getPromise<T>() -> Promise<T> {
+        if processableDelegate != nil {
+            return ProcessablePromise<T>(delegate: processableDelegate!)
+        } else {
+            return Promise<T>()            
+        }
     }
     
     private func getExtractedErrorFromErrorResponse(errorResponse: NSError, jsonResponse: AnyObject?) -> NSError {
@@ -43,7 +57,7 @@ public class ApiManagerUtil {
     }
     
     func objectRequest <T: ResponseObjectSerializable>(URLRequest: URLRequestConvertible) -> Future<T> {
-        let promise = Promise<T>()
+        let promise: Promise<T> = getPromise()
         manager.request(URLRequest).validate().responseObject { (request, response,
             object: T?, error) in
             if error != nil {
@@ -56,7 +70,7 @@ public class ApiManagerUtil {
     }
     
     func collectionRequest<T: ResponseCollectionSerializable>(URLRequest: URLRequestConvertible) -> Future<[T]> {
-        let promise = Promise<[T]>()
+        let promise: Promise<[T]> = getPromise()
         manager.request(URLRequest).validate().responseCollection { (request, response,
             collection: [T]?, error) in
             if error != nil {
@@ -69,7 +83,7 @@ public class ApiManagerUtil {
     }
     
     func boolRequest(URLRequest: URLRequestConvertible) -> Future<Bool> {
-        let promise = Promise<Bool>()
+        let promise: Promise<Bool> = getPromise()
         manager.request(URLRequest).validate().responseJSON{ (request, response,
             jsonResponse, error) in
             if error != nil {
@@ -81,5 +95,53 @@ public class ApiManagerUtil {
         return promise.future
     }
     
+}
+
+class ProcessablePromise<T>: Promise<T> {
+    var delegate: Processable
+    
+    init(delegate: Processable) {
+        self.delegate = delegate
+        super.init()
+        self.delegate.beginProcess()
+    }
+
+    override func completeWith(future: Future<T>) {
+        super.completeWith(future)
+        delegate.endProcess()
+    }
+
+    override func success(value: T) {
+        super.success(value)
+        delegate.endProcess()
+    }
+
+    override func trySuccess(value: T) -> Bool {
+        let result = super.trySuccess(value)
+        delegate.endProcess()
+        return result
+    }
+
+    override func failure(error: NSError) {
+        super.failure(error)
+        delegate.endProcess()
+    }
+
+    override func tryFailure(error: NSError) -> Bool {
+        let result = super.tryFailure(error)
+        delegate.endProcess()
+        return result
+    }
+
+    override func complete(result: Result<T>) {
+        super.complete(result)
+        delegate.endProcess()
+    }
+    
+    override func tryComplete(result: Result<T>) -> Bool {
+        let result = super.tryComplete(result)
+        delegate.endProcess()
+        return result
+    }
 }
 
